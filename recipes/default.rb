@@ -22,7 +22,13 @@ if platform?("ubuntu", "debian")
   package "locales" do
     action :install
   end
-
+  
+  node[:locale][:language_packs].each do |language_pack|
+    package "language-pack-#{language_pack}-base" do
+      action :install
+    end
+  end node[:locale][:language_packs].any?
+  
   execute "Update locale" do
   	command_string = "update-locale LANG=#{node[:locale][:lang]}"
   	command_string << " LANGUAGE=#{node[:locale][:language]}" unless node[:locale][:language].nil?
