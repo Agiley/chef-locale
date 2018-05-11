@@ -32,7 +32,7 @@ if platform?("ubuntu", "debian")
   execute "Update locale" do
   	command_string = "update-locale"
     
-    [:lang, :language, :lc_all, :lc_ctype].each do |var|
+    node[:locale][:vars].each do |var|
       command_string << " #{var.to_s.upcase}=#{node[:locale][var]}" unless node[:locale][var].nil?
     end
 
@@ -40,13 +40,15 @@ if platform?("ubuntu", "debian")
     
     command command_string
   end
+  
+  execute "Source new locale config" do
+    command ". #{node[:locale][:config_path]}"
+  end
 
 end
 
 if platform?("redhat", "centos", "fedora")
-
   execute "Update locale" do
     command "locale -a | grep ^#{node[:locale][:lang]}$ && sed -i 's|LANG=.*|LANG=#{node[:locale][:lang]}|' /etc/sysconfig/i18n"
   end
-
 end
