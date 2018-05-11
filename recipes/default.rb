@@ -30,11 +30,14 @@ if platform?("ubuntu", "debian")
   end if node[:locale][:language_packs].any?
   
   execute "Update locale" do
-  	command_string = "update-locale LANG=#{node[:locale][:lang]}"
-  	command_string << " LANGUAGE=#{node[:locale][:language]}" unless node[:locale][:language].nil?
-  	command_string << " LC_ALL=#{node[:locale][:lc_all]}" unless node[:locale][:lc_all].nil?
-    command_string << " LC_CTYPE=#{node[:locale][:lc_ctype]}" unless node[:locale][:lc_ctype].nil?
+  	command_string = "update-locale"
+    
+    [:lang, :language, :lc_all, :lc_ctype].each do |var|
+      command_string << " #{var.to_s.upcase}=#{node[:locale][var]}" unless node[:locale][var].nil?
+    end
+
     Chef::Log.debug("locale command is #{command_string.inspect}")
+    
     command command_string
   end
 
@@ -47,4 +50,3 @@ if platform?("redhat", "centos", "fedora")
   end
 
 end
-
