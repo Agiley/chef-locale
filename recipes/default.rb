@@ -33,6 +33,7 @@ if platform?("ubuntu", "debian")
   	command_string = "update-locale LANG=#{node[:locale][:lang]}"
   	command_string << " LANGUAGE=#{node[:locale][:language]}" unless node[:locale][:language].nil?
   	command_string << " LC_ALL=#{node[:locale][:lc_all]}" unless node[:locale][:lc_all].nil?
+    command_string << " LC_CTYPE=#{node[:locale][:lc_ctype]}" unless node[:locale][:lc_ctype].nil?
     Chef::Log.debug("locale command is #{command_string.inspect}")
     command command_string
   end
