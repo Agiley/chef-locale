@@ -33,7 +33,10 @@ if platform?("ubuntu", "debian")
   	command_string = "update-locale"
     
     node[:locale][:vars].each do |var|
-      command_string << " #{var.to_s.upcase}=#{node[:locale][var]}" unless node[:locale][var].nil?
+      unless node[:locale][var].to_s.empty?
+        ENV[var.to_s.upcase] = node[:locale][var] # Set ENV so that subsequent processes will have the correct locales set
+        command_string << " #{var.to_s.upcase}=#{node[:locale][var]}"
+      end
     end
 
     Chef::Log.debug("locale command is #{command_string.inspect}")
